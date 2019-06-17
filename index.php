@@ -1,6 +1,7 @@
 <?php 
-	include 'inc/header.php';
+	
 	include 'lib/User.php'; 
+	include 'inc/header.php';
 	Session::checkSession();
 	$user = new User();
 
@@ -38,25 +39,33 @@
 							<th width="20%">Email</th>
 							<th width="20%">Action</th>
 						</tr>
+<?php 
 
+	$userData = $user->getUserData();
+	if ($userData) {
+		$i = 0;
+		foreach ($userData as $sData) {
+			$i++;
+?>
 						<tr>
-							<td>01</td>
-							<td>User Full Name</td>
-							<td>User Name</td>
-							<td>user1@gmail.com</td>
+							<td><?php echo $i; ?></td>
+							<td><?php echo $sData['name']; ?></td>
+							<td><?php echo $sData['username']; ?></td>
+							<td><?php echo $sData['email']; ?></td>
 							<td>
-								<a class="btn btn-primary" href="profile.php?id=1">View</a>
+								<a class="btn btn-primary" href="profile.php?id=<?php echo $sData['id']; ?>">View</a>
 							</td>
 						</tr>
-						<tr>
-							<td>02</td>
-							<td>User Full Name</td>
-							<td>User Name</td>
-							<td>user2@gmail.com</td>
-							<td>
-								<a class="btn btn-primary"  href="profile.php?id=1">View</a>
-							</td>
-						</tr>
+
+		<?php
+		 		}
+			}else{ ?>
+
+				<tr><td colspan="5"><h2>No User Data Found</h2></td></tr>
+
+			<?php } ?>
+		
+
 					</table>
 				</div>
 			</div>
