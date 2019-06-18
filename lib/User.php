@@ -118,7 +118,7 @@
 			if ($result) {
 				Session::init();
 				Session::set('login',true);
-				Session::set('id',$result->id);
+				Session::set('user_id',$result->user_id);
 				Session::set('name',$result->name);
 				Session::set('username',$result->username);
 				Session::set('loginmsg',"<div class='alert alert-success'><strong>Success  ! </strong>You Are Loged in</div>");
@@ -134,7 +134,7 @@
 
 		public function getUserData()
 		{
-			$sql = "SELECT * FROM  tbl_user  ORDER BY id DESC";
+			$sql = "SELECT * FROM  tbl_user  ORDER BY user_id DESC";
 			$query = $this->db->pdo->prepare($sql);
 			$query->execute();
 			$result = $query->fetchAll();
@@ -143,9 +143,9 @@
 
 		public function getUserID($userid)
 		{
-			$sql = "SELECT * FROM  tbl_user  WHERE id=:id LIMIT 1";
+			$sql = "SELECT * FROM  tbl_user  WHERE user_id=:user_id LIMIT 1";
 			$query = $this->db->pdo->prepare($sql);
-			$query->bindValue(':id',$userid);
+			$query->bindValue(':user_id',$userid);
 			$query->execute();
 			$result = $query->fetch(PDO::FETCH_OBJ);
 			return $result;
@@ -184,14 +184,14 @@
 				name     =:name,
 				username =:username,
 				email    =:email
-				WHERE id =:id";
+				WHERE user_id =:user_id";
 
 			$query = $this->db->pdo->prepare($sql);
 
 			$query->bindValue(':name',$name);
 			$query->bindValue(':username',$username);
 			$query->bindValue(':email',$email);
-			$query->bindValue(':id',$userid);
+			$query->bindValue(':user_id',$userid);
 			$result = $query->execute();
 
 			if ($result) {
@@ -259,6 +259,48 @@
 				$msg = "<div class='alert alert-danger'><strong>Password not Updated.</strong></div>";
 				return $msg;
 			}
+		}
+
+		public function getCrimeType()
+		{
+			$sql = "SELECT * FROM  tbl_crime_type  ORDER BY crime_id ASC";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+			$result = $query->fetchAll();
+			return $result;
+		}
+
+		public function createReport($userid, $data)
+		{
+			$crime_type      = $data['crime_type'];
+			$crime_nature    = $data['crime_nature'];
+			$police_station  = $data['police_station'];
+			$address         = $data['address'];
+			$crime_date      = $data['crime_date'];
+			
+			if ($crime_type == "select" OR $crime_nature =="" OR $crime_nature=="" OR $address=="" OR $crime_date=="") {
+				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>Field must not be empty</div>";
+				return $msg;
+			}
+
+			$sql = "INSERT INTO tbl_FIR(crime_id,crime_nature,police_station,address,crime_date) VALUES(:crime_id,:crime_nature,:police_station,:address,:crime_date)";
+
+			$query = $this->db->pdo->prepare($sql);
+			// $query->bindValue(':userid',$userid);
+			$query->bindValue(':crime_id',$crime_type);
+			$query->bindValue(':crime_nature',$crime_nature);
+			$query->bindValue(':police_station',$police_station);
+			$query->bindValue(':address',$address);
+			$query->bindValue(':crime_date',$crime_date);
+			$result = $query->execute();
+			if ($result) {
+				$msg = "<div class='alert alert-success'><strong>Report Submitted Successfully</strong></div>";
+				return $msg;
+			}else{
+				$msg = "<div class='alert alert-danger'><strong>Report has been problem.</strong></div>";
+				return $msg;
+			}
+
 		}
 
 	}

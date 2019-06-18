@@ -38,6 +38,8 @@
 						 ?>
 						<li><a href="index.php">Home</a></li>
 						<li><a href="profile.php?id=<?php echo $id; ?>">Profile</a></li>
+						<li><a href="report_fir.php?id=<?php echo $id; ?>">Report FIR</a></li>
+						<li><a href="view_fir.php?id=<?php echo $id; ?>">View FIR</a></li>
 						<li><a href="?action=logout">Logout</a></li>
 
 						<?php }else{ ?>
