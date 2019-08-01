@@ -4,25 +4,29 @@
 	Session::checkSession();
 
 	
-	if (isset($_GET['id'])) {
-		$userid = (int)$_GET['id'];
+	if (isset($_GET['user_id'])) {
+		$user_id = (int)$_GET['user_id'];
 	}
 
 	$user = new User();
 
 	if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['report'])){
-			$createReport = $user->createReport($userid,$_POST);
+			$createReport = $user->createReport($user_id,$_POST);
 	}
 
 ?>
 
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h2>Report FIR</h2>
-				</div>
+	<div class="indeximg">
+		<div class="profile-container clear">
+			<div class="profile-head clear">
+				<h2><span class="fa fa-plus-square" aria-hidden="true"></span> Report FIR</h2>
+				
+			</div>
+			<div class="profile-box">
+					<!-- <h2><span class="fa fa-plus-square" aria-hidden="true"></span> Report FIR</h2> -->
+				
 
-				<div class="panel-body">
-					<div style="max-width: 400px; margin: 0 auto">
+				
 
 						<?php 
 							
@@ -33,39 +37,34 @@
 						
 						<form action="" method="POST">
 							<?php 
-
-								$sesID = Session::get("id");
-								if ($userid == $sesID) {
+								
+								$sesID = Session::get("user_id");
+								if ($user_id == $sesID) {
 							 ?>
+
+							<!--  <div class="form-group">
+
+								<label for="user_id" name="user_id"  value="<?php echo $user_id; ?>" ></label>
+							</div> -->
+
 							<div class="form-group">
-								<?php 
-									$crimeType = $user->getCrimeType();
-								?>
-								<label>Crime Type: </label>
-								<select id="crime_type" name="crime_type" required="1">
-									<option value="select">--Select--</option>
-									<?php 
-
-									if ($crimeType) {
-									foreach ($crimeType as $sData) {
-
-									?>
-									<option value="<?php echo $sData['crime_id']; ?>"><?php echo $sData['crime_name']; ?></option>
-									<?php 
-										}
-									}
-									?>
-								</select>
+								<label for="crime">Crime</label><br>
+								<input type="text" id="crime" name="crime" class="form-control">
 							</div>
 
 							<div class="form-group">
-								<label for="crime_nature">Crime Nature</label><br>
+								<label for="crime_nature">Details</label><br>
 								<textarea class="form-control" name="crime_nature" cols="47" rows="4"></textarea>
 							</div>
 
 							<div class="form-group">
 								<label for="police_station">Police Station</label>
 								<input type="text" id="police_station" name="police_station" class="form-control">
+							</div>
+
+							<div>
+								<label for="criminals">Criminals</label>
+								<input type="text" id="criminals" name="criminals" class="form-control">
 							</div>
 
 							<div class="form-group">
@@ -81,9 +80,13 @@
 							<button type="submit" name="report" class="btn btn-success">Create Report</button>
 						<?php } ?>
 						</form>
-					</div>
-				</div>
 			</div>
+				
+			<div class="report-footersection clear">
+					<p>&copy; copyright Developed by Ripa Roy.</p>
+				</div>
+		</div>
+	</div>
 
 
 

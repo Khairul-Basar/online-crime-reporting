@@ -26,11 +26,6 @@
 			</div>
 			<div class="profile-box">
 			
-				
-					<!-- <h2>Change Password<span class="pull-right"><a class="btn btn-primary" href="profile.php?user_id=<?php echo $userid; ?>">Back</a></span></h2> -->
-				
-
-				
 
 						<?php 
 							if (isset($passwordUpdate)) {
@@ -55,12 +50,13 @@
 							<button type="submit" name="passwordUpdate" class="btn btn-success">Update</button>
 
 						</form>
-					
-				</div>
-				<div class="changePassword-footersection clear">
-					<p>&copy; copyright Developed by Ripa Roy.</p>
-				</div>
+
+					</div>
+					<div class="changePassword-footersection clear">
+						<p>&copy; copyright Developed by Ripa Roy.</p>
+					</div>
 		</div>
 	</div>
+
 
 <?php include 'inc/footer.php'; ?>

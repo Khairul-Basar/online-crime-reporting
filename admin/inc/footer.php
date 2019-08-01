@@ -6,8 +6,6 @@
 			</div> -->
 
 		<!-- </div> -->
-		<!-- <div class="footer">
-			<h2>this is footer</h2>
-		</div> -->
+		
 	</body>
 </html>

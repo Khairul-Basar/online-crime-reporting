@@ -1,6 +1,6 @@
 <?php 
-	include 'inc/header.php';
 	include 'lib/User.php';
+	include 'inc/header.php';
 	Session::checkLogin();
 	
 	$user = new User();
@@ -8,19 +8,17 @@
 			$userLogin = $user->userLogin($_POST);
 	}
 ?>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h2>User Login</h2>
-				</div>
-
-				<div class="panel-body">
-					<div style="max-width: 400px; margin: 0 auto">
-
-						<?php if (isset($userLogin)) {
-							echo $userLogin;
-						} ?>
+			
+		<div class="backgroundimg">
+			<div class="profile-container">
+				<div class="login-container clear">
+					<div class="login-box">
 
 						<form action="" method="POST">
+							<h2>User Login</h2>
+							<?php if (isset($userLogin)) {
+							echo $userLogin;
+							} ?>
 							<div class="form-group">
 								<label for="email">Email Address</label>
 								<input type="text" id="email" name="email" class="form-control" >
@@ -32,8 +30,9 @@
 							<button type="submit" name="login" class="btn btn-success">Login</button>
 						</form>
 					</div>
+					
 				</div>
 			</div>
-
+		</div>
 
 <?php include 'inc/footer.php'; ?>

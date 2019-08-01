@@ -1,4 +1,5 @@
 <?php 
+	
 	include_once 'Session.php';
 	include 'Database.php';
 
@@ -11,70 +12,11 @@
 			$this->db = new Database();
 		}
 
-		public function userRegistration($data){
-			
-			$name       	  = $data['name'];
-			$username   	  = $data['username'];
-			$email      	  = $data['email'];
-			$password   	  = $data['password'];
-			$confirm_password = $data['confirm_password'];
-
-			$checkEmail = $this->emailCheck($email);
-			
-			if ($name == "" OR $username =="" OR $email=="" OR $password=="") {
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>Field must not be empty</div>";
-				return $msg;
-			}
-
-			if ($password != $confirm_password) {
-				$msg = "<div class='alert alert-danger'><strong>Error ! Those passwords didn't match. Try again. </strong></div>";
-				return $msg;
-			}
-
-			if (strlen($username) < 4) {
-
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>User name is too short!</div>";
-				return $msg;
-			}elseif (preg_match('/[^a-z0-9_-]+/i', $username)){
-
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>User name must only containts alphanumeric,dashes and underscores! </div>";
-				return $msg;
-				
-			}
-
-			if (filter_var($email,FILTER_VALIDATE_EMAIL) === false) {
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>The email address is not valid! </div>";
-				return $msg;
-			}
-
-			if ($checkEmail == true) {
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>This Email Address already exist</div>";
-				return $msg;
-			}
-
-			$password   = md5( $data['password']);
-
-			$sql = "INSERT INTO tbl_user(name,username,email,password) VALUES(:name,:username,:email,:password)";
-			$query = $this->db->pdo->prepare($sql);
-			$query->bindValue(':name',$name);
-			$query->bindValue(':username',$username);
-			$query->bindValue(':email',$email);
-			$query->bindValue(':password',$password);
-			$result = $query->execute();
-
-			if ($result) {
-				$msg = "<div class='alert alert-success'><strong>Your Registration Completed.</strong></div>";
-				return $msg;
-			}else{
-				$msg = "<div class='alert alert-danger'><strong>Your has been problem inserting details.</strong></div>";
-				return $msg;
-			}
-
-		}
+		
 
 		private function emailCheck($email)
 		{
-			$sql = "SELECT email FROM  tbl_user WHERE email= :email";
+			$sql = "SELECT email FROM  admin_user WHERE email= :email";
 			$query = $this->db->pdo->prepare($sql);
 			$query->bindValue(':email',$email);
 			$query->execute();
@@ -89,7 +31,7 @@
 
 
 		public function getLoginUser($email, $password){
-			$sql = "SELECT * FROM  tbl_user WHERE email= :email AND password=:password  LIMIT 1";
+			$sql = "SELECT * FROM  admin_user WHERE email= :email AND password=:password  LIMIT 1";
 			$query = $this->db->pdo->prepare($sql);
 			$query->bindValue(':email',$email);
 			$query->bindValue(':password',$password);
@@ -101,7 +43,7 @@
 
 		public function userLogin($data){
 			$email      = $data['email'];
-			$password   = md5( $data['password']);
+			$password   = $data['password'];
 			$checkEmail = $this->emailCheck($email);
 			
 			if ($email=="" OR $password=="") {
@@ -115,7 +57,7 @@
 			}
 
 			if ($checkEmail == false) {
-				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>This Email Address not exist</div>";
+				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>You are not Admin</div>";
 				return $msg;
 			}
 
@@ -123,11 +65,11 @@
 
 			if ($result) {
 				Session::init();
-				Session::set('login',true);
+				Session::set('admin_login',true);
 				Session::set('user_id',$result->user_id);
 				Session::set('name',$result->name);
 				Session::set('username',$result->username);
-				Session::set('loginmsg',"<div class='alert alert-success'><strong>Success  ! </strong>You Are Loged in</div>");
+				Session::set('loginmsg',"<div class='alert alert-success'><strong>Success  ! </strong>Admin Loged in</div>");
 				header("Location: index.php");
 
 			}else{
@@ -185,7 +127,7 @@
 			}
 
 
-			$sql = "UPDATE tbl_user SET 
+			$sql = "UPDATE admin_user SET 
 
 				name     =:name,
 				username =:username,
@@ -201,18 +143,18 @@
 			$result = $query->execute();
 
 			if ($result) {
-				$msg = "<div class='alert alert-success'><strong>Profile data Updated Successfully.</strong></div>";
+				$msg = "<div class='alert alert-success'><strong>Admin Profile Updated Successfully.</strong></div>";
 				return $msg;
 			}else{
-				$msg = "<div class='alert alert-danger'><strong>Profile Data not Updated.</strong></div>";
+				$msg = "<div class='alert alert-danger'><strong>Admin Profile not Updated.</strong></div>";
 				return $msg;
 			}
 		}
 
 		private function checkPassword($user_id,$old_pass)
 		{
-			$password = md5($old_pass);
-			$sql = "SELECT password FROM  tbl_user WHERE user_id=:user_id AND password= :password";
+			$password = $old_pass;
+			$sql = "SELECT password FROM  admin_user WHERE user_id=:user_id AND password= :password";
 			$query = $this->db->pdo->prepare($sql);
 			$query->bindValue(':user_id',$user_id);
 			$query->bindValue(':password',$password);
@@ -245,9 +187,9 @@
 				return $msg;
 			}
 
-			$password = md5($new_pass);
+			$password = $new_pass;
 
-			$sql = "UPDATE tbl_user SET 
+			$sql = "UPDATE admin_user SET 
 				password =:password
 				WHERE user_id =:user_id";
 
@@ -259,46 +201,68 @@
 			$result = $query->execute();
 
 			if ($result) {
-				$msg = "<div class='alert alert-success'><strong>Password Updated Successfully.</strong></div>";
+				$msg = "<div class='alert alert-success'><strong>Admin Password Updated Successfully.</strong></div>";
 				return $msg;
 			}else{
-				$msg = "<div class='alert alert-danger'><strong>Password not Updated.</strong></div>";
+				$msg = "<div class='alert alert-danger'><strong>Admin Password not Updated. Password has been problem..!!</strong></div>";
 				return $msg;
 			}
 		}
 
-		
-
-		public function createReport($user_id, $data)
+		// this method for get crime type 
+		public function getCrimeType()
 		{
-			// $user_id      	 = $data['user_id'];
-			$crime      	 = $data['crime'];
-			$crime_nature    = $data['crime_nature'];
-			$police_station  = $data['police_station'];
-			$criminals       = $data['criminals'];
-			$address         = $data['address'];
-			$crime_date      = $data['crime_date'];
-			$activity        = 'Pending';
-			
-			if ($crime == "" OR $crime_nature =="" OR $police_station=="" OR $criminals=="" OR $address=="" OR $crime_date == "") {
+			$sql = "SELECT * FROM  tbl_crime_type  ORDER BY crime_id ASC";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+			$result = $query->fetchAll();
+			return $result;
+		}
+
+		// Insert Crime Type
+		public function insert_crime_type($data)
+		{
+			$crime_name = $data['crime_name'];
+
+			if ($crime_name == "") {
 				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>Field must not be empty</div>";
 				return $msg;
 			}
 
-			$sql = "INSERT INTO tbl_FIR(user_id,crime,crime_nature,police_station,criminals,address,crime_date,activity) VALUES(:user_id,:crime,:crime_nature,:police_station,:criminals,:address,:crime_date,:activity)";
+			$sql = "INSERT INTO tbl_crime_type(crime_name) VALUES(:crime_name)";
+			$query = $this->db->pdo->prepare($sql);
+			$query->bindValue(':crime_name',$crime_name);
+			$result = $query->execute();
+			header("Location: add_crime_type.php");
+			
+		}
+
+		public function createReport($userid, $data)
+		{
+			// $user_id      	 = $data['user_id'];
+			$crime_type      = $data['crime_type'];
+			$crime_nature    = $data['crime_nature'];
+			$police_station  = $data['police_station'];
+			$address         = $data['address'];
+			$crime_date      = $data['crime_date'];
+			$activity        = 'Active';
+			
+			if ($crime_type == "select" OR $crime_nature =="" OR $crime_nature=="" OR $address=="" OR $crime_date=="") {
+				$msg = "<div class='alert alert-danger'><strong>Error ! </strong>Field must not be empty</div>";
+				return $msg;
+			}
+
+			$sql = "INSERT INTO tbl_FIR(user_id,crime_id,crime_nature,police_station,address,crime_date,activity) VALUES(:user_id,:crime_id,:crime_nature,:police_station,:address,:crime_date,:activity)";
 
 			$query = $this->db->pdo->prepare($sql);
-
-			$query->bindValue(':user_id',$user_id);
-			$query->bindValue(':crime',$crime);
+			$query->bindValue(':user_id',$userid);
+			$query->bindValue(':crime_id',$crime_type);
 			$query->bindValue(':crime_nature',$crime_nature);
 			$query->bindValue(':police_station',$police_station);
-			$query->bindValue(':criminals',$criminals);
 			$query->bindValue(':address',$address);
 			$query->bindValue(':crime_date',$crime_date);
 			$query->bindValue(':activity',$activity);
 			$result = $query->execute();
-
 			if ($result) {
 				$msg = "<div class='alert alert-success'><strong>Report Submitted Successfully</strong></div>";
 				return $msg;
@@ -306,6 +270,7 @@
 				$msg = "<div class='alert alert-danger'><strong>Report has been problem.</strong></div>";
 				return $msg;
 			}
+
 		}
 
 		public function getView_FIR()
@@ -326,7 +291,7 @@
 
 		public function getRead_More()
 		{
-			$sql = "SELECT tbl_FIR.fir_id,tbl_user.user_id,tbl_user.username,tbl_FIR.crime,tbl_FIR.criminals,tbl_FIR.crime_nature,tbl_FIR.police_station,tbl_FIR.address,tbl_FIR.crime_date,tbl_FIR.activity
+			$sql = "SELECT tbl_FIR.fir_id,tbl_user.username,tbl_FIR.crime,tbl_FIR.criminals,tbl_FIR.crime_nature,tbl_FIR.police_station,tbl_FIR.address,tbl_FIR.crime_date,tbl_FIR.activity
 			 FROM  tbl_FIR  
 			 INNER JOIN tbl_user
 			 ON tbl_FIR.user_id = tbl_user.user_id
@@ -394,6 +359,8 @@
 			return $result;
 		}
 
+
+		// For Active Posts
 		public function getActivePost()
 		{
 			$activity ='Active';
@@ -406,7 +373,21 @@
 			$query = $this->db->pdo->prepare($sql);
 			$query->execute();
 			$result = $query->fetchAll();
-			// $result = $query->fetch(PDO::FETCH_OBJ);
+			return $result;
+		}
+
+		// For Pending posts
+		public function getPendingPost()
+		{
+			$sql = "SELECT tbl_FIR.user_id,tbl_FIR.fir_id,tbl_user.username,tbl_FIR.crime,tbl_FIR.criminals,tbl_FIR.crime_nature,tbl_FIR.police_station,tbl_FIR.address,tbl_FIR.crime_date,tbl_FIR.activity
+			 FROM  tbl_FIR  
+			 INNER JOIN tbl_user
+			 ON tbl_FIR.user_id = tbl_user.user_id
+			 ORDER BY tbl_FIR.fir_id DESC";
+
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+			$result = $query->fetchAll();
 			return $result;
 		}
 
@@ -422,6 +403,98 @@
 			$text = substr($text, 0 ,strrpos($text, ' '));
 			$text = $text.".....";
 			return $text;
+		}
+
+
+		// Next 3 Methods for delete user Comments, user Posts, Users
+
+		public function delete_User_Comments($user_id)
+		{
+			$sql = "DELETE FROM  tbl_comments WHERE user_id = $user_id";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+		}
+
+		public function delete_User_Post($user_id)
+		{
+			$sql = "DELETE FROM  tbl_FIR WHERE user_id = $user_id";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+		}
+
+		public function user_Delete($user_id)
+		{
+			$sql = "DELETE FROM  tbl_user WHERE user_id = $user_id";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+			$this->delete_User_Post($user_id);
+			$this->delete_User_Comments($user_id);
+			header("Location: manage_user.php");
+		}
+
+
+
+		public function getAdminID($user_id)
+		{
+			$sql = "SELECT * FROM  admin_user  WHERE user_id=:user_id LIMIT 1";
+			$query = $this->db->pdo->prepare($sql);
+			$query->bindValue(':user_id',$user_id);
+			$query->execute();
+			$result = $query->fetch(PDO::FETCH_OBJ);
+			return $result;
+		}
+
+
+
+		public function post_Approve($fir_id)
+		{
+			$activity = 'Active';
+
+			$sql = "UPDATE tbl_FIR SET 
+				activity = :activity
+				WHERE fir_id =:fir_id";
+
+			$query = $this->db->pdo->prepare($sql);
+
+			$query->bindValue(':activity',$activity);
+			$query->bindValue(':fir_id',$fir_id);
+			
+			$query->execute();
+		}
+
+
+		public function post_Deactivate($fir_id)
+		{
+			$activity = 'Deactive';
+
+			$sql = "UPDATE tbl_FIR SET 
+				activity = :activity
+				WHERE fir_id =:fir_id";
+
+			$query = $this->db->pdo->prepare($sql);
+
+			$query->bindValue(':activity',$activity);
+			$query->bindValue(':fir_id',$fir_id);
+			
+			$query->execute();
+		}
+
+		// Next two Methods for delete posts and delete post Comments
+
+		public function delete_post_Comments($fir_id)
+		{
+			$sql = "DELETE FROM  tbl_comments WHERE fir_id = $fir_id";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+		}
+
+		public function post_Delete($fir_id)
+		{
+			$sql = "DELETE FROM  tbl_FIR WHERE fir_id = $fir_id";
+			$query = $this->db->pdo->prepare($sql);
+			$query->execute();
+			$this->delete_post_Comments($fir_id);
+			header("Location: manage_fir.php");
 		}
 
 	}

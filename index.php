@@ -7,68 +7,79 @@
 
 ?>
 
-<?php 
+<div class="indeximg">
+	<div class="container">
+		
+	
 
-	$loginmsg = Session::get("loginmsg");
-	if (isset($loginmsg)) {
-		echo $loginmsg;
-	}
-	Session::set("loginmsg",NULL);
- ?>
 
-			<div class="panel panel-default">
+			<div class="panel panel-success" style="margin-top: 70px;">
+				<?php 
+
+					$loginmsg = Session::get("loginmsg");
+					if (isset($loginmsg)) {
+						echo $loginmsg;
+					}
+					Session::set("loginmsg",NULL);
+				?>
 				<div class="panel-heading">
-					<h2>User List <span class="pull-right">Welcome <strong>
-						<?php 
+					
+						<h2><span class="fa fa-home" aria-hidden="true"></span> Home <span class="pull-right">Welcome <strong>
+							<?php 
 
-							$name = Session::get("name");
-							if (isset($name)) {
-								echo $name;
-							}
+								$name = Session::get("name");
+								if (isset($name)) {
+									echo $name;
+								}
 
-						 ?>
-					</strong></span></h2>
+							 ?>
+						</strong></span></h2>
+					
 				</div>
+				
 
 				<div class="panel-body">
-					<table class="table table-striped">
-						<tr>
-							<th width="20%">Serial</th>
-							<th width="20%">Name</th>
-							<th width="20%">UserName</th>
-							<th width="20%">Email</th>
-							<th width="20%">Action</th>
-						</tr>
-<?php 
+					<div style="max-width: 1200px; margin: 0 auto">
+						
+						<?php 
 
-	$userData = $user->getUserData();
-	if ($userData) {
-		$i = 0;
-		foreach ($userData as $sData) {
-			$i++;
-?>
-						<tr>
-							<td><?php echo $i; ?></td>
-							<td><?php echo $sData['name']; ?></td>
-							<td><?php echo $sData['username']; ?></td>
-							<td><?php echo $sData['email']; ?></td>
-							<td>
-								<a class="btn btn-primary" href="profile.php?id=<?php echo $sData['id']; ?>">View</a>
-							</td>
-						</tr>
+							$getActivePost = $user->getActivePost();
+							if ($getActivePost) {
+								foreach ($getActivePost as $sData) {
+									if ($sData['activity'] == 'Active') {
+										
+									
+						?>
+						<div class="well">			
+							<h4><label> Crime Name: </label><span><?php echo $sData['crime']; ?></span></h4>
+							<h4><label>Police Station: </label><span><?php echo $sData['police_station']; ?></span></h4>
+							<h4><label>Criminals Name:</label>  <span><?php echo $sData['criminals']; ?></span></h4>
+							<h4 class="blog-post-meta"><label><?php echo $user->formatDate( $sData['crime_date']);?></label> <span>By <a href="profile.php?user_id=<?php echo $sData['user_id']; ?>"><?php echo $sData['username']; ?></a></span></h4>
 
-		<?php
-		 		}
-			}else{ ?>
+							<div class="details">
+								<p><?php echo $user->text_Shorten($sData['crime_nature']); ?>
+									<a class="btn btn-success" href="read_more.php?fir_id=<?php echo $sData['fir_id']; ?>">Read More</a>
+								</p>
 
-				<tr><td colspan="5"><h2>No User Data Found</h2></td></tr>
+							</div>
+							<!-- <div class="index-button">
+								<a class="btn btn-success" href="read_more.php?fir_id=<?php echo $sData['fir_id']; ?>">Read More</a>
+							</div>
+ -->							
 
-			<?php } ?>
-		
-
-					</table>
+						</div>
+								<?php } ?>
+						<?php }
+						} ?>
+						
+						
+					</div>
 				</div>
 			</div>
-
+	</div>
+	<div class="index-footersection templete clear">
+		<p>&copy; copyright Developed by Ripa Roy.</p>
+	</div>
+</div>
 
 <?php include 'inc/footer.php'; ?>

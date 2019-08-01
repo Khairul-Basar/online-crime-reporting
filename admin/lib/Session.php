@@ -27,17 +27,16 @@
 		}
 
 		public function checkSession()
-		{	
-			self::init();
-			if (self::get("login") == false) {
+		{
+			if (self::get("admin_login") == false) {
 				self::destroy();
-				header("Location: fontpage.php");
+				header("Location: login.php");
 			}
 		}
 
 		public function checkLogin()
 		{
-			if (self::get("login") == true) {
+			if (self::get("admin_login") == true) {
 				header("Location: index.php");
 			}
 		}
@@ -47,7 +46,7 @@
 		{
 			session_destroy();
 			session_unset();
-			header("Location: fontpage.php");
+			header("Location: login.php");
 		}
 
 	}

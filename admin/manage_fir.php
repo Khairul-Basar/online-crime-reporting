@@ -12,13 +12,24 @@
 	$db = new Database();
 ?>
 
-
-	<div class="indeximg">
+<div class="indeximg">
+	<div class="profile-container">
 		<div class="container">
-			<div class="panel panel-info" style="margin-top: 70px;">
 
+			<div class="panel panel-info" style="margin-top: 70px;">
 				<div class="panel-heading">
-					<h2><span class="fa fa-eye" aria-hidden="true"></span> View FIR</h2>
+					<h3><span class="fa fa-eye" aria-hidden="true"></span> View FIR 
+						<div class="dropdown pull-right">
+						  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Manage Crime Type and Post Type
+						  <span class="caret"></span></button>
+						  <ul class="dropdown-menu">
+						   
+						    <li><a href="pending_post.php">All_Pending_Posts</a></li>
+						    <li><a href="active_post.php">All_Active_Posts</a></li>
+						    <li><a href="deactive_post.php">All_Dective_Posts</a></li>
+						  </ul>
+						</div>
+					</h3>
 				</div>
 
 				<div class="panel-body">
@@ -26,11 +37,10 @@
 						
 						<?php 
 							$view_fir = $user->getView_FIR();
-							$sesID = Session::get("user_id");
+
 							if ($view_fir) {
 							foreach ($view_fir as $sData) {
-								 if ($userid == $sData['user_id']) {
-								 	if ($userid == $sesID) {
+								 
 						?>
 						<div class="well">
 								
@@ -43,22 +53,18 @@
 								<?php } ?>
 
 								<h4><label> Crime Name: </label><span><?php echo $sData['crime']; ?></span></h4>
-
-								<!-- <h4>Crime Name: <label>__<?php echo $sData['crime']; ?>__</label></h4> -->
 								<h4><label>Police Station: </label><span><?php echo $sData['police_station']; ?></span></h4>
 								<h4><label>Criminals Name:</label>  <span><?php echo $sData['criminals']; ?></span></h4>
 								<h4 class="blog-post-meta"><label><?php echo $user->formatDate( $sData['crime_date']);?></label> <span>By <?php echo $sData['username']; ?></span></h4>
-
 								<!-- <p class="blog-post-meta"><label><?php echo $user->formatDate($sData['crime_date']); ?> , By <?php echo $sData['username']; ?></label></p> -->
-
 								<div class="details">
 									<p><?php echo $user->text_Shorten($sData['crime_nature']); ?>
-										<a class="btn btn-info" href="readmore.php?fir_id=<?php echo $sData['fir_id']; ?>&&user_id=<?php echo $userid; ?>">Read More</a>
+										<a class="btn btn-primary" href="readmore.php?fir_id=<?php echo $sData['fir_id']; ?>">Read More</a>
 									</p>
 
 								</div>
 
-								<!-- <p><?php echo $user->text_Shorten($sData['crime_nature']); ?></p> -->
+								
 
 								
 
@@ -66,8 +72,8 @@
 							
 						</div>
 						
-						<?php } } }  ?>
-					
+							<?php  }  ?>
+						<?php } ?>
 					</div>
 				</div>
 			</div>
@@ -76,8 +82,9 @@
 			<p>&copy; copyright Developed by Ripa Roy.</p>
 		</div>
 	</div>
+</div>
 			
-			<?php } ?>
+			
 
 
 
